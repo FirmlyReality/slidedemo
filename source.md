@@ -532,6 +532,14 @@ k8s本身不集成网络， 它需要外部的插件支持。 它支持cni网络
 
 ---
 
+### 3.5 多租户隔离的解决方案
+
+- Kubernetes提供了NetworkPolicy，支持按Namespace级别的网络隔离。 需要注意的是，使用NetworkPolicy需要特定的网络解决方案（比如calico），如果不启用，即使配置了NetworkPolicy也无济于事。
+
+- Network Policy提供了网络隔离能力，它基于SIG－Network group演进而来，Kubernetes只提供内置的labelSelector和label以及Network Policy API定义，本身并不负责实现如何隔离。在Kubernetes使用的CNI网络实现中，目前只有Calico、Romana、Contiv等少少几个实现了Network Policy集成。
+
+---
+
 
 
 ---
