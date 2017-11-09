@@ -538,13 +538,103 @@ k8s本身不集成网络， 它需要外部的插件支持。 它支持cni网络
 
 - Network Policy提供了网络隔离能力，它基于SIG－Network group演进而来，Kubernetes只提供内置的labelSelector和label以及Network Policy API定义，本身并不负责实现如何隔离。在Kubernetes使用的CNI网络实现中，目前只有Calico、Romana、Contiv等少少几个实现了Network Policy集成。
 
+- 通过对network Policy的定义实现网络隔离。
+
 ---
 
+## 4 调度
 
+### 4.1 Kubernetes本身的调度器
+
+- kubernets scheduler主要负责的工作是：接受API Server创建的新Pod，并为其安排一个主机，将信息写入etcd中。当然在这个过程中要处理的事情远远没有这么简单，需要综合考虑多种决策因素，比如把同一个replication controller的Pod分配到不同的主机上，防止因主机节点宕机对业务造成较大冲击；以及如何考虑资源均衡，从而提升整个集群的资源使用率等。
+
+---
+
+#### 4.1.1 调度流程
+
+<img src="images/k8_schedule.jpg" height=450 style="margin: 0px 0px">
+
+---
+
+#### 4.1.1 调度流程
+
+- 客户端提交创建请求，可以通过API Server的Restful API，也可以使用kubectl命令行工具。支持的数据类型包括JSON和YAML。
+
+- API Server处理用户请求，存储Pod数据到etcd。
+
+- 调度器通过API Server查看未绑定的Pod。尝试为Pod分配主机。
+
+- 过滤主机：调度器用一组规则过滤掉不符合要求的主机。比如Pod指定了所需要的资源量，那么可用资源比Pod需要的资源量少的主机会被过滤掉。
+
+- 主机打分：对第一步筛选出的符合要求的主机进行打分，在主机打分阶段，调度器会考虑一些整体优化策略，比如把容一个Replication Controller的副本分布到不同的主机上，使用最低负载的主机等。
+
+- 选择主机：选择打分最高的主机，进行binding操作，结果存储到etcd中。
+
+- 所选主机对于的kubelet根据调度结果执行Pod创建操作。
+
+---
+
+#### 4.1.2 具体的调度算法
+
+过滤主机的目的是过滤掉不符合Pod要求的主机，现在kubernetes中实现的过滤规则主要包括以下几种：
+
+- NoDiskConflict：检查在此主机上是否存在卷冲突。如果这个主机已经挂载了卷，其它同样使用这个卷的Pod不能调度到这个主机上。
+
+- NoVolumeZoneConflict：检查给定的zone限制前提下，检查如果在此主机上部署Pod是否存在卷冲突。假定一些volumes可能有zone调度约束，VolumeZonePredicate根据volumes自身需求来评估pod是否满足条件。必要条件就是任何volumes的zone-labels必须与节点上的zone-labels完全匹配。
+
+- PodFitsResources：检查主机的资源是否满足Pod的需求。根据实际已经分配的资源量做调度，而不是使用已实际使用的资源量做调度。
+
+- PodFitsHostPorts：检查Pod内每一个容器所需的HostPort是否已被其它容器占用。如果有所需的HostPort不满足需求，那么Pod不能调度到这个主机上。
+
+- HostName：检查主机名称是不是Pod指定的HostName。
+
+- MatchNodeSelector：检查主机的标签是否满足Pod的*nodeSelector*属性需求。
+
+- MaxEBSVolumeCount：确保已挂载的EBS存储卷不超过设置的最大值。默认值是39。它会检查直接使用的存储卷，和间接使用这种类型存储的PVC。计算不同卷的总目，如果新的Pod部署上去后卷的数目会超过设置的最大值，那么Pod不能调度到这个主机上。
+
+- MaxGCEPDVolumeCount：确保已挂载的GCE存储卷不超过设置的最大值。默认值是16。规则同上。
+
+---
+
+#### 4.1.2 具体的调度算法
+
+经过过滤后，再对符合需求的主机列表进行打分，最终选择一个分值最高的主机部署Pod。kubernetes用一组优先级函数处理每一个待选的主机。每一个优先级函数会返回一个0-10的分数，分数越高表示主机越“好”， 同时每一个函数也会对应一个表示权重的值。最终主机的得分用以下公式计算得出：
+
+finalScoreNode = (weight1 * priorityFunc1) + (weight2 * priorityFunc2) + … + (weightn * priorityFuncn)
+
+现在支持的优先级函数包括以下几种：
+
+- LeastRequestedPriority： 节点空闲的那部分与总容量的比值（即（总容量-节点上pod的容量总和-新pod的容量）/总容量）分数。
+
+- BalancedResourceAllocation： 部署Pod后各项资源均衡的分数。	
+
+- SelectorSpreadPriority： 对于属于同一个service、replication controller的Pod，尽量分散在不同的主机上。
+
+- ImageLocalityPriority： 根据主机上是否已具备Pod运行的环境来打分。是否有镜像。
+
+- NodeAffinityPriority： Kubernetes支持两种类型的选择器，一种是“hard”选择器，它保证所选的主机必须满足所有Pod对主机的规则要求。这种选择器更像是之前的nodeselector。另一种是“soft”选择器，它作为对调度器的提示，调度器会尽量但不保证满足NodeSelector的所有要求。
+
+---
+
+#### 4.1.3 多层次资源限制
+
+- kubernetes包含多种资源限制，用来控制Container、Pod和Namespace级别的资源共享。
+
+<img src="images/k8s_resource_limit.jpg" height=350 style="margin: 0px 100px">
+
+- LimitRange是在pod级别设置的pod容量限制。所有在对应的命名空间中的容器，都会受到LimitRange的资源限制。
+
+- Pod的每一类资源限制是Pod中对应的资源类型限制的总和，在调度的过程中调度器使用这个总和值和主机上可用容量做比较，决定主机是否满足资源需求。这种调度属于静态的资源调度，即使主机上的真实负载很低，只要容量限制不满足需求，也不能在主机上部署Pod。
+
+---
+
+### 4.3 Daemon Set如何进行调度
+
+### 4.4 用户自定义调度器
 
 ---
 
 class: center, middle
 
 # 谢谢
-（使用hostPort时需要注意端口冲突的问题，不过Kubernetes在调度Pod的时候会检查宿主机端口是否冲突，比如当两个Pod均要求绑定宿主机的80端口，Kubernetes将会将这两个Pod分别调度到不同的机器上）;
+
