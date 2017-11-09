@@ -630,7 +630,13 @@ finalScoreNode = (weight1 * priorityFunc1) + (weight2 * priorityFunc2) + … + (
 
 ### 4.3 Daemon Set如何进行调度
 
+- 通常情况下pod要运行的机器是由scheduler来选择的的。但是DaemonSet controller创建的pod要运行的机器是已经被选择好的（pod在创建的时候.spec.nodeName字段就指定了， 因此会被scheduler忽略）。
+
+- 但是如果node被标记为以下的两种状态： node.alpha.kubernetes.io/notReady  或node.alpha.kubernetes.io/unreachable，daemon pods就不会调度到上面。
+
 ### 4.4 用户自定义调度器
+
+- 可以按照Kubernetes的API自己定义调度器，实现特定的调度算法。
 
 ---
 
