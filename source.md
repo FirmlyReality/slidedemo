@@ -39,7 +39,7 @@ class: center, middle
 
 ---
 
-## 1. 功能简介
+### 1.1 功能简介
 
 - 存储系统挂载
 
@@ -62,6 +62,55 @@ class: center, middle
 - 自检和调试
 
 - 识别和认证
+
+---
+
+### 1.2 安装和配置
+
+Kubernetes中提供了比较多的安装和配置方案：
+
+- 独立方案
+
+	- 使用minikube(能创建一个单节点的，本地的kubernetes集群，安装配置是全自动的)
+
+	- 使用kubeadm进行安装配置(多节点的自动部署方案)
+
+	- 使用conjure-up安装配置（ubuntu方案，一键式配置，用于生产环境，会下载比较多镜像）
+	
+	- *传统方法（分别下载所需组件，逐个进行配置，官方文档中没有这种方法）
+
+- 托管方案
+
+	- Google Container Engine
+	
+	- IBM Blumix Container Service
+	
+	- ...
+
+- 一站式云方案
+
+	- On Google Compute Engine
+
+	- On AWS EC2
+ 
+	- On Alibaba Cloud(阿里云)
+	
+	- ...
+---
+
+### 1.3 Kubeadm的安装方案
+
+- Kubeadm是一个多节点的Kubernetes的安装部署器，只需要提前安装好docker daemon。它会在每个node上为每个组件建立相应的docker并pull相应的镜像。然后用docker-in-docker技术部署安装kubernetes集群。
+
+步骤：
+
+- 下载安装kubeadm，kubelet，kubectl, kubernetes-cni
+
+- 使用kubeadm在master上init： init后自动安装和启动相应组件
+
+- 安装配置网络方案插件(kubectl apply -f ...，比如flannel,calico)
+
+- 在每个node上使用kubeadm join： join后自动安装和启动相应组件
 
 ---
 
