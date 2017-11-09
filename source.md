@@ -640,6 +640,20 @@ finalScoreNode = (weight1 * priorityFunc1) + (weight2 * priorityFunc2) + … + (
 
 ---
 
+## Reference
+
+- [kubernetes文档](https://kubernetes.io/docs/home/)
+
+- [使用kubeadm在ububtu16.04安装kubernetes1.6.1-flannel](http://blog.csdn.net/ximenghappy/article/details/70157361)
+
+- [Kubernetes核心概念总结](https://www.cnblogs.com/zhenyuyaodidiao/p/6500720.html)
+
+- [kubernetes实践指南](https://zhuanlan.zhihu.com/p/30283973)
+
+- [kubernetes调度详解](http://blog.csdn.net/horsefoot/article/details/51263364)
+
+---
+
 class: center, middle
 
 # 谢谢
