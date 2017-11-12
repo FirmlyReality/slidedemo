@@ -640,6 +640,70 @@ finalScoreNode = (weight1 * priorityFunc1) + (weight2 * priorityFunc2) + … + (
 
 ---
 
+## 5 Kubernetes容器日志收集
+
+### 5.1 基本方法：kubectl log命令
+
+其效果如下：
+
+    $ kubectl logs counter
+    0: Mon Jan  1 00:00:00 UTC 2001
+    1: Mon Jan  1 00:00:01 UTC 2001
+    2: Mon Jan  1 00:00:02 UTC 2001
+    ...
+
+---
+
+### 5.2 输出到标准输出流的日志收集方法
+
+可以通过上述命令输出到宿主机的一个文件中。若有其他log服务，可以通过收集这个文件来收集日志。
+
+<img src="images/logging-with-node-agent.png" height=350 style="margin: 0px 100px">
+
+---
+
+### 5.3 输出到文件的日志收集方法：sidecar container(边车容器？)
+
+#### Streaming Sidecar Container
+
+<img src="images/logging-with-streaming-sidecar.png" height=350 style="margin: 0px 100px">
+
+1. 共享存储的同一Pod内的容器(sidecar container)将文件日志输出到标准输出流。
+2. 通过kubectl log将输出流重定向至宿主机文件。
+3. 其他log服务通过收集这个文件内的信息收集日志。
+
+---
+
+#### Sidecar container with a logging agent
+
+<img src="images/logging-with-sidecar-agent.png" height=350 style="margin: 0px 100px">
+
+在同一个pod内启动日志收集器的容器。
+
+日志收集器比如fluentd等。
+
+---
+
+### 5.4 直接暴露日志
+
+<img src="images/logging-from-application.png" height=250 style="margin: 0px 100px">
+
+官方文档中没有给出具体方法。网上搜索也没有找到比较满意的方法，比较可能的是将宿主机目录挂载到容器上，然后在宿主机上就可以访问到。
+
+---
+
+### 5.5 生产环境下日志系统的常用解决方案：ELK(Elasticsearch + Logstash或Fluentd + Kibana)
+
+Logstash或Fluentd: 实时日志收集系统，支持多种日志输入格式和输出格式。
+
+Elasticsearch: 是一个实时的分布式搜索和分析引擎。它可以用于文档存储，全文搜索，结构化搜索以及实时分析，与常见的互联网应用最典型的应用场景是日志分析查询和全文搜索。提供日志的存储(索引)和搜索。
+
+Kibana: 是一个开源的分析与可视化平台，设计出来用于和Elasticsearch一起使用的。你可以用kibana搜索、查看、交互存放在Elasticsearch索引里的数据，使用各种不同的图表、表格、地图等kibana能够很轻易地展示高级数据分析与可视化。
+
+<img src="images/kibana.jpg" height=300 style="margin: 0px 200px">
+
+---
+
 ## Reference
 
 - [kubernetes文档](https://kubernetes.io/docs/home/)
