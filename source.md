@@ -30,9 +30,9 @@ class: center, middle
 
 ## 2 系统模型
 
-<img src="images2/system.png" width=500 style="margin: 0px 80px">
+<img src="images2/system.PNG" width=500 style="margin: 0px 80px">
 
-<img src="images2/system2.png" width=650 style="margin: 0px 80px">
+<img src="images2/system2.PNG" width=650 style="margin: 0px 80px">
 
 ---
 
@@ -40,7 +40,7 @@ class: center, middle
 
 - 两部分容器，一部分被攻击者入侵控制，另一部分被合法用户控制
 
-<img src="images2/attack.jpg" width=400 style="margin: 0px 80px">
+<img src="images2/attack.JPG" width=400 style="margin: 0px 80px">
 
 ---
 
@@ -84,7 +84,7 @@ class: center, middle
 
 - 分离名称空间：名称空间是一个让进程成组的方法，这个方法控制成组的进程只能看到和通信同组的进程，如LXC
 
-<img src="images2/process.jpg" width=800 style="margin: 0px 80px">
+<img src="images2/process.JPG" width=800 style="margin: 0px 80px">
 
 ---
 
@@ -138,7 +138,7 @@ class: center, middle
 
 - Lyaer 2 VNI: 2层网络虚拟接口，支持更多功能，但性能差，不能从宿主机上控制容器内的网络启动。 VETH。
 
-<img src="images2/network.jpg" width=800 style="margin: 0px 80px">
+<img src="images2/network.JPG" width=800 style="margin: 0px 80px">
 
 ---
 
@@ -148,10 +148,10 @@ class: center, middle
 
 - rlimits对CPU和内存的控制有限：不能设定相对共享CPU时间, 在内存里驻留的虚拟内存页数，物理CPU(physical CPU)和内存(memory bank)的分配。 
 
-<img src="images2/resource.jpg" width=800 style="margin: 0px 80px">
+<img src="images2/resource.JPG" width=800 style="margin: 0px 80px">
 
 ---
 
 ### 5 总结
 
-<img src="images2/summary.jpg" width=1000 style="margin: 0px 80px">
+<img src="images2/summary.JPG" width=1000 style="margin: 0px 80px">
