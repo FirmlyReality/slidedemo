@@ -2,7 +2,7 @@ class: center, middle
 
 # Security of OS-Level Virtualization Technologies
 
-### Elena Reshetova1, Janne Karhunen2, Thomas Nyman 3, and N. Asokan4
+### Elena Reshetova, Janne Karhunen, Thomas Nyman, and N. Asokan
 
 ---
 
@@ -137,6 +137,8 @@ class: center, middle
 - Layer 3 VNI：3层网络虚拟接口，更弹性。
 
 - Lyaer 2 VNI: 2层网络虚拟接口，支持更多功能，但性能差，不能从宿主机上控制容器内的网络启动。 VETH。
+
+- LXC支持MACVLAN技术，可以让每个容器有自己的链路层地址。有不同的模式(private,bridge,VEPA)。
 
 <img src="images2/network.JPG" width=800 style="margin: 0px 80px">
 
