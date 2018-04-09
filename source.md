@@ -66,7 +66,7 @@ class: center, middle
 
 - 设备隔离
 
-- IPC隔离
+- IPC隔离: IPC原语，如信号量、共享内存、消息队列
 
 - 网络隔离
 
@@ -96,7 +96,7 @@ class: center, middle
 
 - LXC不止修改了容器中进程的根目录，还修改了根文件系统：可以将原文件系统的挂载点移到一个新文件系统的目录下，从而进行隔离。
 
-- can further strengthen the ﬁlesystem isolation by mapping the user and group ids to a less privileged range of host uids and groups. 
+- 能通过把用户和组id映射到一个低特权级别的用户和组id加强隔离 
 
 ---
 
@@ -120,11 +120,11 @@ class: center, middle
 
 - 限制进程通过IPC原语进行通信
 
-- Unix是基于文件系统的IPC机制(domain sockets和named pipes)，因此如果文件系统隔离好了，IPC也隔离好了。
+- Unix是基于文件系统的IPC机制(domain sockets和named pipes)，因此如果文件系统隔离好了，IPC也隔离好了
 
-- 另外的方法：IPC名称空间，允许创建完全不交的IPC集合。如Linux-VServer, OpenVZ, LxC and Cells。
+- 另外的方法：IPC名称空间，允许创建完全不交的IPC集合。如Linux-VServer, OpenVZ, LxC and Cells
 
-- Solaris Zones: zone ID。
+- Solaris Zones: 每个IPC对象关联一个zone ID，即关联某个zone，zone内的进程不能访问非关联的IPC对象
 
 ---
 
@@ -146,7 +146,7 @@ class: center, middle
 
 - 大致分为rlimits和cgroups两种方法
 
-- rlimits对CPU和内存的控制有限：不能设定relative share of CPU time, number of virtual pages resident in RAM or physical CPU or memory bank allocations. 
+- rlimits对CPU和内存的控制有限：不能设定相对共享CPU时间, 在内存里驻留的虚拟内存页数，物理CPU(physical CPU)和内存(memory bank)的分配。 
 
 <img src="images2/resource.jpg" width=800 style="margin: 0px 80px">
 
