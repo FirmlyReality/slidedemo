@@ -25,7 +25,7 @@ class: center, middle
 - 基于 kubernetes (容器编排引擎) 和 Istio (微服务流量治理)，
 - 创建者：Google、Pivotal、IBM、Red Hat
 
-<img src="images/logo.png" width=400 style="margin: 0px 40px">
+<img src="images/knative/logo.png" width=400 style="margin: 0px 40px">
 
 ---
 
@@ -48,7 +48,7 @@ Knative 负责：
 
 - Knative 期望支持所有类型的应用
 
-<img src="images/app.png" width=500 style="margin: 0px 40px">
+<img src="images/knative/app.png" width=500 style="margin: 0px 40px">
 
 ---
 
@@ -57,7 +57,7 @@ Knative 负责：
 - Kubernetes 提供基于 pod 的管理能力：副本管理、弹性伸缩等
 - Istio 通过边车容器提供网络管理能力：负载均衡、微服务流量路由等
 
-<img src="images/knative.png" width=500 style="margin: 0px 40px">
+<img src="images/knative/knative.png" width=500 style="margin: 0px 40px">
 
 ---
 
@@ -69,7 +69,7 @@ Knative 由三部分系统组成：
 - Serving：服务系统，用来配置应用的路由、升级策略、自动扩缩容等功能
 - Eventing：事件系统，用来自动完成事件的绑定和触发
 
-<img src="images/components.png" width=600 style="margin: 0px 40px">
+<img src="images/knative/components.png" width=600 style="margin: 0px 40px">
 
 ---
 
@@ -81,7 +81,7 @@ Knative 由三部分系统组成：
 
 - 为了定义标准化、可移植、可重用、性能高效的构建方法
 
-<img src="images/knative_build.png" width=400 style="margin: 0px 40px">
+<img src="images/knative/knative_build.png" width=400 style="margin: 0px 40px">
 
 ---
 
@@ -126,7 +126,7 @@ Serving 提供的功能：
 - **Route**：应用的路由规则，也就是进来的流量如何访问应用，对应了 istio 的流量管理（VirtualService）
 - **Service**：注意这里不是 kubernetes 中提供服务发现的那个 service，而是 knative 自定义的 CRD，它的全称是 services.serving.knative.dev 。
 
-<img src="images/serving.png" width=400 style="margin: 0px 40px">
+<img src="images/knative/serving.png" width=400 style="margin: 0px 40px">
 
 ---
 
@@ -171,13 +171,13 @@ spec:
     percent: 50
 ```
 
-<img src="images/route.png" width=400 style="margin: 0px 40px">
+<img src="images/knative/route.png" width=400 style="margin: 0px 40px">
 
 ---
 
 ## 2.2 Serving: 原理
 
-<img src="images/serving_pro.png" width=500 style="margin: 0px 40px">
+<img src="images/knative/serving_pro.png" width=500 style="margin: 0px 40px">
 
 - 每个 revision 对应了一组 deployment 管理的 pod
 - pod 会自动汇报 metrics 数据到 autoscaler，autoscaler 会根据请求量和资源使用情况修改 deployment 的 replicas 数量，从而实现自动扩缩容
@@ -205,7 +205,7 @@ spec:
 
 ## 2.3 Eventing：整体流程
 
-<img src="images/eventing.png" width=600 style="margin: 0px 40px">
+<img src="images/knative/eventing.png" width=600 style="margin: 0px 40px">
 
 ---
 
